@@ -63,6 +63,11 @@
     -webkit-animation: weee 7.5s ease-in-out infinite;
     animation: weee 7.5s ease-in-out infinite;
 }
+@keyframes weee {
+    50% {
+        background-position: 100% 0
+    }
+}
 .img {
     width: auto; /* 让图片保持原始宽度，高度会根据比例自动调整 */
     max-height: 80%; /* 设置图片的最大高度 */
@@ -176,11 +181,11 @@
     border-radius: 5px; /* 设置圆角 */
 }
 .message{
-  background-color: brown;
+  background-color: gray;
   height: 90%;
 }
 .cin{
-  background-color: black;
+  background-color: gray;
   display: flex;
   align-items: center;
   flex-direction: row;
