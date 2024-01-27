@@ -18,7 +18,9 @@
 }
 .img {
     width: auto; /* 让图片保持原始宽度，高度会根据比例自动调整 */
-    max-height: 10%; /* 设置图片的最大高度 */
+    max-height: 80%; /* 设置图片的最大高度 */
+    position: relative;
+    left: -10px;
 }
 .C {
 	display: flex;
@@ -107,18 +109,87 @@
     border-top-right-radius: 10px;
 	border-top-right-radius: 10px;
 }
+.light23{
+  display: block;
+}
+.title23{
+  color: #eaeaea;
+  font-size: 32px;
+  font-weight: 900;
+}
+.info23{
+  color: #eaeaea;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: capitalize;  /* 设置英文首字母大写 */
+}
+.light23:hover .title23 span{
+  animation: light 0.4s ease forwards; /* 设置 forwards 属性，让动画保持在最后一个值 */
+}
+.light23:hover .title23 span:nth-of-type(2){
+  animation-delay: .14s;
+}
+.light23:hover .title23 span:nth-of-type(3){
+  animation-delay: .42s;
+}
+.light23:hover .title23 span:nth-of-type(4){
+  animation-delay: .78s;
+}
+@keyframes light{
+  10%,30%,50%{
+    color: #eaeaea;
+    text-shadow: none;
+  }
+  20%,40%,60%{
+    color: #318BF6;
+    text-shadow: 0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
+  }
+  100% {
+    color: #318BF6;
+    text-shadow:0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
+  }
+}
+.light23:hover .info23 span{
+  animation: light 0.4s ease forwards;
+  animation-delay: 1s;
+}
+.title{
+  display: flex;
+  height: 10%;
+  align-items: center;
+}
 </style>
 </head>
 <body>
-<div class="all"> <img src="icon.jpg" class="img" alt>
+<div class="all">
+  <div class="title">
+    <img src="icon.jpg" class="img" alt>
+    <div class="light23">
+      <div class="title23">
+        <span>五</span>
+        <span>常</span>
+        <span>中</span>
+        <span>学</span>
+      </div>
+      <div class="info23">
+        <span>WuChang middle school</span>
+      </div>
+    </div>
+  </div>
   <div class="C">
     <div class="box">
       <div class="myself">
-        <p class="myname right" style="font-size: 10px;font-weight: bold;line-height: 0.25;flex-grow: 1;">A12</p>
-        <p class="myip right" style="font-size: 10px;line-height: 0.25;flex-grow: 1;">127.0.0.1</p>
+        <p class="myname right" style="font-size: 2ch;font-weight: bold;line-height: 0.25;flex-grow: 1;">A12</p>
+        <p class="myip right" style="font-size: 2ch;line-height: 0.25;flex-grow: 1;">127.0.0.1</p>
       </div>
       <div class="mlist"></div>
-      <div class="New" style="text-align: center;font-weight: bold">+New</div>
+      <div class="New" style="
+      font-size: 3ch;
+      text-align: center;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;">+New</div>
     </div>
     <div class="boxr">
       <div class="cin">
