@@ -2,7 +2,54 @@
 <html lang="cn">
 <head>
 <meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" integrity="sha512-jEnuDt6jfecCjthQAJ+ed0MTVA++5ZKmlUcmDGBv2vUI/REn6FuIdixLNnQT+vKusE2hhTk2is3cFvv5wA+Sgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <title>WZChat</title>
+<style>
+  .light23{
+  display: block;
+}
+.title23{
+  color: #eaeaea;
+  font-size: 32px;
+  font-weight: 900;
+}
+.info23{
+  color: #eaeaea;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: capitalize;  /* 设置英文首字母大写 */
+}
+.light23:hover .title23 span{
+  animation: light 0.4s ease forwards; /* 设置 forwards 属性，让动画保持在最后一个值 */
+}
+.light23:hover .title23 span:nth-of-type(2){
+  animation-delay: .14s;
+}
+.light23:hover .title23 span:nth-of-type(3){
+  animation-delay: .42s;
+}
+.light23:hover .title23 span:nth-of-type(4){
+  animation-delay: .78s;
+}
+@keyframes light{
+  10%,30%,50%{
+    color: #eaeaea;
+    text-shadow: none;
+  }
+  20%,40%,60%{
+    color: #318BF6;
+    text-shadow: 0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
+  }
+  100% {
+    color: #318BF6;
+    text-shadow:0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
+  }
+}
+.light23:hover .info23 span{
+  animation: light 0.4s ease forwards;
+  animation-delay: 1s;
+}
+</style>
 <style>
 .all {
     display: flex;
@@ -109,54 +156,52 @@
     border-top-right-radius: 10px;
 	border-top-right-radius: 10px;
 }
-.light23{
-  display: block;
-}
-.title23{
-  color: #eaeaea;
-  font-size: 32px;
-  font-weight: 900;
-}
-.info23{
-  color: #eaeaea;
-  font-size: 16px;
-  letter-spacing: 1px;
-  text-transform: capitalize;  /* 设置英文首字母大写 */
-}
-.light23:hover .title23 span{
-  animation: light 0.4s ease forwards; /* 设置 forwards 属性，让动画保持在最后一个值 */
-}
-.light23:hover .title23 span:nth-of-type(2){
-  animation-delay: .14s;
-}
-.light23:hover .title23 span:nth-of-type(3){
-  animation-delay: .42s;
-}
-.light23:hover .title23 span:nth-of-type(4){
-  animation-delay: .78s;
-}
-@keyframes light{
-  10%,30%,50%{
-    color: #eaeaea;
-    text-shadow: none;
-  }
-  20%,40%,60%{
-    color: #318BF6;
-    text-shadow: 0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
-  }
-  100% {
-    color: #318BF6;
-    text-shadow:0px 0px 20px #1ABFED,0px 0px 40px #1ABFED,0px 0px 60px #1ABFED;
-  }
-}
-.light23:hover .info23 span{
-  animation: light 0.4s ease forwards;
-  animation-delay: 1s;
-}
 .title{
   display: flex;
   height: 10%;
   align-items: center;
+}
+.prettyInput {
+    border: none; /* 去除默认边框 */
+    outline: none; /* 去除点击时的外边框 */
+    padding: 10px; /* 设置内边距 */
+    font-size: 10px; /* 调整字体大小 */
+    background-color: #f5f5f5; /* 设置背景颜色 */
+    color: #333; /* 设置字体颜色 */
+    position: relative;
+    left: 15px;
+    width: 100%; /* 设置宽度 */
+    /*height: 60px; /* 设置高度 */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    border-radius: 5px; /* 设置圆角 */
+}
+.message{
+  background-color: brown;
+  height: 90%;
+}
+.cin{
+  background-color: black;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 10%;
+}
+.send{
+  width: 20px;
+  height: 20px;
+  background-color: greenyellow;
+  border-radius: 5px; /* 设置圆角 */
+  position: relative;
+  right: 10px;
+  transition: all 0.5s ease-in-out;
+}
+</style>
+<style>
+.bodymovinanim {
+  width: 90%;
+  max-width: 50px;
+  margin-bottom: 30px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -192,13 +237,47 @@
       justify-content: center;">+New</div>
     </div>
     <div class="boxr">
+      <div class="message"></div>
       <div class="cin">
-        <div class="send"></div>
+        <input type="text" class="prettyInput" placeholder="请输入内容..."> <!-- 创建文本输入框 -->
+        <div class="send">
+          <div class="bodymovinanim"></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 <script>
 	</script>
+<script>/* Play an animation on each click */
+    let cold=true
+    let iconSkipForward = document.getElementsByClassName('bodymovinanim')[0];
+    let chat = document.getElementsByClassName('prettyInput')[0];
+    let send = document.getElementsByClassName('send')[0];
+    console.log(iconSkipForward)
+    let animationSkipForward = bodymovin.loadAnimation({
+            container: iconSkipForward,
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: "https://raw.githubusercontent.com/thesvbd/Lottie-examples/master/assets/animations/skip-forward.json"
+    });
+
+      iconSkipForward.addEventListener('click', function() {
+      console.log(cold)
+      if(cold){
+        cold=false
+        setTimeout("cold=true;send.style.backgroundColor=\"greenyellow\";",3000)
+        animationSkipForward.playSegments([0,60], true);
+        console.log("敲击图标")
+        console.log("message-sned:",chat.value)
+        chat.value=""
+        send.style.backgroundColor="darkgrey";
+      }
+      else{
+        alert("不要发得那么快rua! QAQ")
+      }
+    });
+  </script>
 </body>
 </html>
