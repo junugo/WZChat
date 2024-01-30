@@ -1,16 +1,12 @@
 <!DOCTYPE html>
+
 <head>
   <title>欢迎使用WZChat!</title>
 </head>
 <style>
   body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(to bottom right, #FF6B6B, #FFC154);
-    margin: 0; /* 添加这一行，以去除 body 的默认边距 */
+    margin: 0;
+    /* 添加这一行，以去除 body 的默认边距 */
   }
 
   .box {
@@ -19,7 +15,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; /* 将 .box 元素移到背景，使其位于最底层 */
+    z-index: 0;
+    /* 将 .box 元素移到背景，使其位于最底层 */
   }
 
   .round-box {
@@ -69,9 +66,11 @@
     0% {
       transform: translateY(0);
     }
+
     50% {
       transform: translateY(-16px);
     }
+
     100% {
       transform: translateY(0);
     }
@@ -90,7 +89,8 @@
     box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.2), -6px -6px 16px rgba(255, 255, 255, 0.8), inset 0px 0px 0px rgba(0, 0, 0, 0.2),
       inset 0px 0px 0px rgba(255, 255, 255, 0.8);
     transition: 0.2s;
-    margin:25px;
+    margin: 25px;
+    z-index: 1;
   }
 
   .good-lablel:hover {
@@ -144,8 +144,8 @@
     transition-delay: 200ms;
   }
 
-  .user-name:focus + .ti-shi-box .ti-shi-word,
-  .user-name:valid + .ti-shi-box .ti-shi-word {
+  .user-name:focus+.ti-shi-box .ti-shi-word,
+  .user-name:valid+.ti-shi-box .ti-shi-word {
     color: #3034d4;
     transform: translateY(-30px);
   }
@@ -154,94 +154,155 @@
   .user-name:valid {
     border-bottom: 2px solid #3034d4;
   }
-  .btn31{
-  width:190px;
-  height:42px;
-  cursor:pointer;
-  border:none;
-  border-radius:4px;
-  background-color:#333;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  transition:0.3s;
-}
-.btn31:hover{
-  background-color:#3185fa;
-}
-.btn31:active{
-  animation:btn31-eff 3s linear infinite;
-}
-@keyframes btn31-eff{
-  0%{
-  box-shadow:0 0 2px #3185fa;
-}
-50%{
-  box-shadow:0 0 40px #3185fa;
-}
-100%{
-  box-shadow:0 0 2px #3185fa;
-}
-}
-.img{
-  width: auto; /* 让图片保持原始宽度，高度会根据比例自动调整 */
-  max-height: 10%; /* 设置图片的最大高度 */
-}
+
+  .btn31 {
+    width: 190px;
+    height: 42px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #333;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    transition: 0.3s;
+    z-index: 1;
+  }
+
+  .btn31:hover {
+    background-color: #3185fa;
+  }
+
+  .btn31:active {
+    animation: btn31-eff 3s linear infinite;
+  }
+
+  @keyframes btn31-eff {
+    0% {
+      box-shadow: 0 0 2px #3185fa;
+    }
+
+    50% {
+      box-shadow: 0 0 40px #3185fa;
+    }
+
+    100% {
+      box-shadow: 0 0 2px #3185fa;
+    }
+  }
+
+  .img {
+    width: auto;
+    /* 让图片保持原始宽度，高度会根据比例自动调整 */
+    max-height: 10%;
+    /* 设置图片的最大高度 */
+    z-index: 1;
+  }
+
+  .success {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0);
+    height: 100vh;
+    z-index: -1;
+    transition: all 1s ease-out;
+  }
+
+  .text {
+    font-weight: 1000;
+    font-size: 500%;
+    opacity: 0;
+    transition: all 1s ease-out;
+  }
+
+  .normal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to bottom right, #FF6B6B, #FFC154);
+  }
 </style>
-<img src="icon2.png" class="img">
-<div class="box">
-  <div class="round-box">
-    <div class="round"></div>
-    <div class="round"></div>
+<div class="normal">
+  <img src="icon2.png" class="img">
+  <div class="box">
+    <div class="round-box">
+      <div class="round"></div>
+      <div class="round"></div>
+    </div>
+    <div class="bg-filter"></div>
   </div>
-  <div class="bg-filter"></div>
+  <div class="good-lablel">
+    <label class="witle-lablel">
+      <input class="user-name" type="text" required>
+      <span class="ti-shi-box">
+        <span class="ti-shi-word">用</span>
+        <span class="ti-shi-word">户</span>
+        <span class="ti-shi-word">名</span>
+      </span>
+    </label>
+  </div>
+  <button class="btn31">Sign in!</button>
 </div>
-<div class="good-lablel">
-  <label class="witle-lablel">
-    <input class="user-name" type="text" required>
-    <span class="ti-shi-box">
-      <span class="ti-shi-word">用</span>
-      <span class="ti-shi-word">户</span>
-      <span class="ti-shi-word">名</span>
-    </span>
-  </label>
+<div class="success">
+  <p class="text">Hello!</p>
 </div>
-<button class="btn31">Sign in!</button>
 <script>
   let button = document.querySelector(".btn31");
   let name = document.querySelector(".user-name");
-  button.addEventListener('click', function() {
+  let success = document.querySelector(".success");
+  let text = document.querySelector(".text");
+  function all_right() {
+    console.log("动画，启动！");
+    success.style.zIndex = 2;
+    setTimeout("success.style.backgroundColor=\"white\";", 500)
+    setTimeout("text.style.opacity=1", 2000)
+    setTimeout("text.style.opacity=0", 4000)
+    setTimeout("text.innerHTML=name.value+\" !\";text.style.opacity=1", 5000)
+    setTimeout("window.location.reload()", 7500)
+  }
+  button.addEventListener('click', function () {
     //alert(name.value)
     console.log(name.value)
-    if(name.value.length<2){
+    if (name.value.length < 2) {
       alert("你的名字必须要多于两个字哦 awa")
     }
-    else{
-      fetch('/sign/'+name.value)
+    else {
+      fetch('/sign/' + name.value)
         .then(Response => {
-        if (!Response.ok) {
-              throw new Error('Network response was not ok');
+          if (!Response.ok) {
+            throw new Error('Network response was not ok');
           }
           return Response.text();
-      })
+        })
         .then(data => {
-        // 处理响应
-        console.log(data);
-        if(data==1){
-          alert("你的 ip 已被使用！ :(")
-        }
-        else if(data==2){
-          alert("该名字已被注册 :(")
-        }
-        else{
-          alert("Welcome!")
-        }
-      })
-      .catch(error => {
-        // 处理错误
-        console.error('There has been a problem with your fetch operation:', error);
-        alert("远程服务器异常 QAQ")
-      });
+          // 处理响应
+          console.log(data);
+          if (data == 1) {
+            alert("你的 ip 已被使用！ :(")
+          }
+          else if (data == 2) {
+            alert("该名字已被注册 :(")
+          }
+          else {
+            //alert("Welcome!")
+            all_right()
+          }
+        })
+
+        .catch(error => {
+          // 处理错误
+          console.error('There has been a problem with your fetch operation:', error);
+          alert("远程服务器异常 QAQ")
+        });
     }
   })
 </script>

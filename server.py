@@ -118,8 +118,9 @@ async def sign(request: Request, name: str):
     if book.in_name(name):
         return 2
     print(f"新注册用户({client_host}):{name}")
-    book.new(client_host, name)
-    book.save()
+    if name!="JUNU_LOVE_PROGRAMMING":#调试万能码
+        book.new(client_host, name)
+        book.save()
     return client_host
 
 
@@ -138,7 +139,10 @@ async def web(page_name: str):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index():
+async def index(request: Request):
+    client_host = request.client.host
+    if book.in_ip(client_host):
+        return FileResponse("static/index.html")
     return FileResponse("static/Sign.html")
 
 
