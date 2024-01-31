@@ -1,13 +1,14 @@
+import time
+
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from typing import List
 import os
 from typing import List, Dict
 import socket
 import asyncio
-
+import threading
 
 class name_base():
     def __init__(self, file: str = "New.txt"):
@@ -58,6 +59,9 @@ class name_base():
             return self.base[ip]
         return 0
 
+    def remove(self,ip:str):
+        return self.base.pop(ip)
+
     def ip(self, name: str):
         if name in self.base.values():
             for key, value in self.base.items():
@@ -70,11 +74,47 @@ class name_base():
     def in_name(self,name:str):
         return name in self.base.values()
 
+class User():
+    def friend_list(self,ip:str):
+        all_friend_chat={"全部":"all"}
+        try:
+            with open("user/"+ip+".txt", 'r', encoding='utf-8') as file:
+                for line in file:
+                    tmp=line.strip().split(' ')
+                    all_friend_chat[tmp[0]]=tmp[1]
+        except FileNotFoundError:
+            print("文件不存在！")
+        return all_friend_chat
+    def add_friend(self,ip:str,friend_ip:str):
+        chat_num=str(len(os.listdir("chat")) + 1)
+        with open("chat/"+chat_num+".txt", 'w', encoding='utf-8') as file:
+            file.write(f"{ip} {friend_ip}\n")
+        with open("user/"+ip+".txt", 'w', encoding='utf-8') as file:
+            file.write(f"{friend_ip} {chat_num}\n")
+        with open(f"user/{friend_ip}.txt", 'w', encoding='utf-8') as file:
+            file.write(ip+" "+chat_num+"\n")
+        print(f"用户 {ip} 已成功添加好友 {friend_ip}")
+    def chat_history(self,ip:str,chat_num:str):
+        history=[]
+        try:
+            with open("chat/"+chat_num+".txt", 'r', encoding='utf-8') as file:
+                first_line = file.readline()
+                both=first_line.strip().split(' ')
+                if ip==both[1]:
+                    for line in file[1:]:
+                        history.append(str(int(line[0])+1%2)+line[1:])
+                else:
+                    history=file[1:]
+        except FileNotFoundError:
+            print("文件不存在！")
+        return history
+
 
 
 book = name_base("Test.txt");
 book.load()
 
+user=User()
 
 def get_local_ip():
     try:
@@ -109,6 +149,47 @@ async def get_photo(request: Request):
     client_host = request.client.host
     return client_host
 
+@app.get("/Me")
+async def me(request: Request):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    return {"name":book.name(request.client.host),"ip":request.client.host}
+
+@app.get("/Add/{friend_name}")
+async def add(request: Request, friend_name: str):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    if book.in_name(friend_name)==0:
+        return 1
+    if friend_name==book.name(request.client.host):
+        return 2
+    friend_ip=book.ip(friend_name)
+    print(friend_ip)
+    print(user.friend_list(request.client.host))
+    if friend_ip in user.friend_list(request.client.host):
+        return 3
+    user.add_friend(request.client.host,friend_ip)
+    return "SUCCESS!"
+
+@app.get("/Name/{ip}")
+async def name(request: Request,ip:str):
+    if ip=="全部":
+        return "All"
+    if book.in_ip(ip)==0:
+        return 1
+    return book.name(ip)
+
+@app.get("/delete")
+async def delete(request: Request):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    return book.remove(request.client.host)
+
+@app.get("/List")
+async def List(request: Request):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    return user.friend_list(request.client.host)
 
 @app.get("/sign/{name}")
 async def sign(request: Request, name: str):
@@ -118,7 +199,16 @@ async def sign(request: Request, name: str):
     if book.in_name(name):
         return 2
     print(f"新注册用户({client_host}):{name}")
-    if name!="JUNU_LOVE_PROGRAMMING":#调试万能码
+    if name=="JUNU_LOVE_PROGRAMMING":#调试万能码
+        print("发现万能码")
+        book.new(client_host, name)
+        def fun():
+            time.sleep(30)
+            book.remove(client_host)
+            print("已关闭万能码")
+        back = threading.Thread(target=fun)
+        back.start()
+    else:
         book.new(client_host, name)
         book.save()
     return client_host
@@ -151,6 +241,11 @@ async def run_server(host, port):
     server = uvicorn.Server(config)
     await server.serve()
 
+def my_load():
+    while True:
+        time.sleep(60)
+        book.load()
+        print("更新文件数据")
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
@@ -161,6 +256,8 @@ if __name__ == "__main__":
     # 启动第二个服务器
     server2 = run_server("127.0.0.1", 8001)
 
+    load_file = threading.Thread(target=my_load)
+    load_file.start()
     # 运行事件循环
     try:
         loop.run_until_complete(asyncio.gather(server1, server2))

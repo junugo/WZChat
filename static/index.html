@@ -54,7 +54,7 @@
   .body{
     margin: 0;
   }
-.all {
+.put_all {
     display: flex;
     flex-direction: column; /* 将子元素垂直排列 */
     align-items: center; /* 在主轴上居中 */
@@ -135,7 +135,14 @@
     position: absolute;
     width: 100%;
     bottom: 0;
-    background-color: #FFC2C3
+    background-color: #FFC2C3;
+    cursor: pointer;
+      font-size: 3ch;
+      text-align: center;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 }
 .New::before {
     content: "";
@@ -203,6 +210,15 @@
   right: 10px;
   transition: all 0.5s ease-in-out;
 }
+.Sbox{
+  background-color: chartreuse;
+}
+.name{
+  font-size: 16px;
+}
+.ip{
+  font-size: 10px;
+}
 </style>
 <style>
 .bodymovinanim {
@@ -214,7 +230,7 @@
 </style>
 </head>
 <body>
-<div class="all">
+<div class="put_all">
   <div class="title">
     <img src="icon.jpg" class="img" alt>
     <div class="light23">
@@ -235,14 +251,17 @@
         <p class="myname right" style="font-size: 2ch;font-weight: bold;line-height: 0.25;flex-grow: 1;">A12</p>
         <p class="myip right" style="font-size: 2ch;line-height: 0.25;flex-grow: 1;">127.0.0.1</p>
       </div>
-      <div class="mlist"></div>
-      <div class="New" style="
-      font-size: 3ch;
-      text-align: center;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;">+New</div>
+      <div class="mlist">
+        <div class="Sbox">
+          <div class="name">All</div>
+          <div class="ip">全部</div>
+        </div>
+        <div class="Sbox">
+          <div class="name">A19</div>
+          <div class="ip">1.1.1.1</div>
+        </div>
+      </div>
+      <div class="New">+New</div>
     </div>
     <div class="boxr">
       <div class="message"></div>
@@ -256,13 +275,75 @@
   </div>
 </div>
 <script>
+  var friends=[]
+  let New=document.querySelector(".New")
+  let mlist=document.querySelector(".mlist")
+  load_user()
+  function load_user(){
+    fetch('/Me')
+    .then(response => response.json())
+    .then(data => {
+      // 处理响应
+      console.log(data);
+      console.log(data.name);
+      console.log(data.ip);
+      
+      document.querySelector(".myname").innerHTML=data.name;
+      document.querySelector(".myip").innerHTML=data.ip;
+    }).catch(error => {console.error('There has been a problem with your fetch operation:', error);alert("远程服务器异常 QAQ")});
+    fetch('/List')
+    .then(response => response.json())
+    .then(data => {
+      console.log("friend:",data);
+      for (friendip in data){
+        (async function (friendip,data){
+          friendname=await GetName(friendip)
+          ChatId=data[friendip]
+          console.log(friendip,"\n",friendname,"\n",ChatId);
+          var divElement = document.createElement("div");
+          divElement.setAttribute("class", "Sbox");
+          mlist.appendChild(divElement);
+          divElement.innerHTML = `<div class=\"name\">${friendname}</div><div class=\"ip\">${friendip}</div>`
+          friends[ChatId]=divElement
+        })(friendip,data)
+      }
+      console.log("friend:",friends);
+    }).catch(error => {console.error('There has been a problem with your fetch operation:', error);alert("远程服务器异常 QAQ")});
+  }
+  async function GetName(ip){
+    return fetch('/Name/'+ip)
+      .then(response => response.json())
+      .then(data => {
+        return data
+      }).catch(error => {console.error('There has been a problem with your fetch operation:', error);alert("远程服务器异常 QAQ")});
+  }
+  New.addEventListener("click",function(){
+    var friendName = prompt("请输入对方名称");
+    fetch('/Add/'+friendName)
+      .then(response => response.json())
+      .then(data => {
+        console.log("Add friend:",data);
+        if (data==1){
+          alert("未查询到此人! :(")
+        }
+        else if (data==2){
+          alert("不能添加自己 awa")
+        }
+        else if (data==3){
+          alert("你已添加过此好友! awa")
+        }
+        else{
+          alert("添加成功! awa")
+          window.location.reload()
+        }
+      }).catch(error => {console.error('There has been a problem with your fetch operation:', error);alert("远程服务器异常 QAQ")});
+  })
 	</script>
 <script>/* Play an animation on each click */
     let cold=true
     let iconSkipForward = document.getElementsByClassName('bodymovinanim')[0];
     let chat = document.getElementsByClassName('prettyInput')[0];
     let send = document.getElementsByClassName('send')[0];
-    console.log(iconSkipForward)
     let animationSkipForward = bodymovin.loadAnimation({
             container: iconSkipForward,
             renderer: 'svg',
