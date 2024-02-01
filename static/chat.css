@@ -1,0 +1,60 @@
+.message
+{
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+.message p
+{
+    position: relative;
+    right: 0;
+    text-align: right;
+    max-width: 65%;
+    padding: 12px;
+    background: #dcf8c6;
+    border-radius: 10px;
+    font-size: 0.9em;
+    word-break:break-all;
+}
+.message p::before
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -12px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg,#dcf8c6 0%,#dcf8c6 50%,transparent 50%,transparent);
+}
+.message p span
+{
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    opacity: 0.5;
+}
+.my_message
+{
+    justify-content: flex-end;
+    right: 20px;
+}
+.frnd_message
+{
+    justify-content: flex-start;
+    left: 30px;
+}
+.frnd_message p
+{
+    background: #fff;
+    text-align: left;
+}
+.message.frnd_message p::before
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -12px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(225deg,#fff 0%,#fff 50%,transparent 50%,transparent);
+}

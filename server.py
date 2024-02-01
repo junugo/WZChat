@@ -101,20 +101,47 @@ class User():
                 first_line = file.readline()
                 both=first_line.strip().split(' ')
                 if ip==both[1]:
-                    for line in file[1:]:
+                    for line in file.readlines()[1:]:
                         history.append(str(int(line[0])+1%2)+line[1:])
                 else:
-                    history=file[1:]
+                    history=file.readlines()[1:]
         except FileNotFoundError:
             print("文件不存在！")
         return history
+    def is_friend(self,ip:str,friend_ip:str):
+        return friend_ip in self.friend_list(ip)
+    def ChatId(self,ip:str,friend_ip:str):
+        return self.friend_list(ip)[friend_ip]
+    def send(self,ip:str,friend_ip:str,message:str):
+        try:
+            id=self.ChatId(ip,friend_ip)
+            file_name="chat/"+id+".txt"
+            with open(file_name, 'r', encoding='utf-8') as file:
+                first_line = file.readline()
+                both=first_line.strip().split(' ')
+                if ip==both[1]:
+                    with open(file_name, 'a', encoding='utf-8') as file2:
+                        file2.write(f"1 {time_machine_now()} {message}\n")
+                else:
+                    with open(file_name, 'a', encoding='utf-8') as file2:
+                        file2.write(f"0 {time_machine_now()} {message}\n")
+        except FileNotFoundError:
+            print("文件不存在！")
 
+def time_machine_now():
+    return time.time()
 
+def time_machine_past(timestamp:int):
+    timeArray = time.localtime(timestamp)
+    styleTime = time.strftime(str("%Y/%m/%d %H:%M:%S"), timeArray)
+    return styleTime
 
 book = name_base("Test.txt");
 book.load()
 
 user=User()
+
+print("现在时间：",time_machine_now(),"=",time_machine_past(time_machine_now()))
 
 def get_local_ip():
     try:
@@ -166,13 +193,13 @@ async def add(request: Request, friend_name: str):
     friend_ip=book.ip(friend_name)
     print(friend_ip)
     print(user.friend_list(request.client.host))
-    if friend_ip in user.friend_list(request.client.host):
+    if user.is_friend(request.client.host,friend_ip):
         return 3
     user.add_friend(request.client.host,friend_ip)
     return "SUCCESS!"
 
 @app.get("/Name/{ip}")
-async def name(request: Request,ip:str):
+async def name(ip:str):
     if ip=="全部":
         return "All"
     if book.in_ip(ip)==0:
@@ -184,6 +211,26 @@ async def delete(request: Request):
     if book.in_ip(request.client.host)==0:
         return "Who are you?awa"
     return book.remove(request.client.host)
+
+@app.get("/send/{friendip}/{message}")
+async def delete(request: Request,friendip:str,message:str):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    if book.in_ip(friendip)==0:
+        return 1
+    if user.is_friend(request.client.host,friendip)==False:
+        return 2
+    return user.send(request.client.host,friendip,message)
+
+@app.get("/history/{friendip}")
+async def delete(request: Request,friendip:str):
+    if book.in_ip(request.client.host)==0:
+        return "Who are you?awa"
+    if book.in_ip(friendip)==0:
+        return 1
+    if user.is_friend(request.client.host,friendip)==False:
+        return 2
+    return user.chat_history(request.client.host,user.ChatId(request.client.host,friendip))
 
 @app.get("/List")
 async def List(request: Request):
