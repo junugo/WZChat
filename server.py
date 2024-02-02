@@ -8,6 +8,8 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
+import datetime
+
 
 class name_base():
     def __init__(self, file: str = "New.txt"):
@@ -110,7 +112,7 @@ class User():
                 lines = file.readlines()
                 for i in range(len(lines)):
                     Chat = lines[i].split(" ")
-                    history_book[i] = {"user": book.name(Chat[0]), "time": time_machine_past(float(Chat[1])),
+                    history_book[i] = {"user": book.name(Chat[0]), "time": time_machine_past(float(Chat[1]),False),
                                        "message": lines[i][lines[i].find(" ", lines[i].find(" ", lines[i].find(
                                            " ") + 1)):-1]}  # print(history_book)
         except FileNotFoundError:
@@ -137,11 +139,23 @@ def time_machine_now():
     return time.time()
 
 
-def time_machine_past(timestamp: float):
+def time_machine_past(timestamp: float,easy:bool=True):
     timeArray = time.localtime(timestamp)
+    if easy==False:
+        dt=datetime.datetime.fromtimestamp(timestamp)
+        # 获取当前时间
+        today = datetime.datetime.now() - datetime.timedelta(days=-1)
+        # 计算昨天的日期
+        yesterday = today - datetime.timedelta(days=1)
+        over_yesterday = today - datetime.timedelta(days=2)
+        if dt.date().strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
+            return time.strftime("%H:%M:%S", timeArray)
+        if dt.date().strftime('%Y-%m-%d') == yesterday.strftime('%Y-%m-%d'):
+            return "昨天 "+time.strftime("%H:%M:%S", timeArray)
+        if dt.date().strftime('%Y-%m-%d') == over_yesterday.strftime('%Y-%m-%d'):
+            return "前天 "+time.strftime("%H:%M:%S", timeArray)
     styleTime = time.strftime("%Y/%m/%d %H:%M:%S", timeArray)
     return styleTime
-
 
 book = name_base("Test.txt");
 book.load()
