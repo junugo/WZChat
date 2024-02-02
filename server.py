@@ -164,6 +164,9 @@ user = User()
 
 print("现在时间：", time_machine_now(), "=", time_machine_past(time_machine_now()))
 
+if not os.path.exists("chat"):print("已创建 chat");os.makedirs("chat")
+if not os.path.exists("user"):print("已创建 user");os.makedirs("user")
+
 
 def get_local_ip():
     try:
@@ -330,6 +333,7 @@ def my_load():
 
 
 if __name__ == "__main__":
+    print("初始化已完成，准备启动服务器")
     loop = asyncio.get_event_loop()
 
     # 启动第一个服务器
