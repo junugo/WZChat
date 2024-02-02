@@ -1,14 +1,13 @@
+import asyncio
+import os
+import socket
+import threading
 import time
 
-from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Request
-from fastapi.responses import FileResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
 import uvicorn
-import os
-from typing import List, Dict
-import socket
-import asyncio
-import threading
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, HTMLResponse
+
 
 class name_base():
     def __init__(self, file: str = "New.txt"):
@@ -59,7 +58,7 @@ class name_base():
             return self.base[ip]
         return 0
 
-    def remove(self,ip:str):
+    def remove(self, ip: str):
         return self.base.pop(ip)
 
     def ip(self, name: str):
@@ -69,74 +68,88 @@ class name_base():
                     return key
         else:
             return 0
-    def in_ip(self,ip:str):
-        if ip=="全部":return True
+
+    def in_ip(self, ip: str):
+        if ip == "全部": return True
         return ip in self.base
-    def in_name(self,name:str):
+
+    def in_name(self, name: str):
         return name in self.base.values()
 
+
 class User():
-    def friend_list(self,ip:str):
-        all_friend_chat={}
+    def friend_list(self, ip: str):
+        all_friend_chat = {}
         try:
-            with open("user/"+ip+".txt", 'r', encoding='utf-8') as file:
+            with open("user/" + ip + ".txt", 'r', encoding='utf-8') as file:
                 for line in file:
-                    tmp=line.strip().split(' ')
-                    all_friend_chat[tmp[0]]=tmp[1]
+                    tmp = line.strip().split(' ')
+                    all_friend_chat[tmp[0]] = tmp[1]
         except FileNotFoundError:
             print("文件不存在！")
         return all_friend_chat
-    def new(self,ip:str):
-        with open("user/"+ip+".txt", 'w', encoding='utf-8') as file:
+
+    def new(self, ip: str):
+        with open("user/" + ip + ".txt", 'w', encoding='utf-8') as file:
             file.write(f"全部 public\n")
-    def add_friend(self,ip:str,friend_ip:str):
-        chat_num=str(len(os.listdir("chat")) + 1)
-        with open("chat/"+chat_num+".txt", 'w', encoding='utf-8') as file:
+
+    def add_friend(self, ip: str, friend_ip: str):
+        chat_num = str(len(os.listdir("chat")) + 1)
+        with open("chat/" + chat_num + ".txt", 'w', encoding='utf-8') as file:
             pass
-        with open("user/"+ip+".txt", 'w', encoding='utf-8') as file:
+        with open("user/" + ip + ".txt", 'a', encoding='utf-8') as file:
             file.write(f"{friend_ip} {chat_num}\n")
-        with open(f"user/{friend_ip}.txt", 'w', encoding='utf-8') as file:
+        with open(f"user/{friend_ip}.txt", 'a', encoding='utf-8') as file:
             file.write(f"{ip} {chat_num}\n")
         print(f"用户 {ip} 已成功添加好友 {friend_ip}")
-    def chat_history(self,chat_num:str):
-        history_book={}
+
+    def chat_history(self, chat_num: str):
+        history_book = {}
         try:
-            with open("chat/"+chat_num+".txt", 'r', encoding='utf-8') as file:
+            with open("chat/" + chat_num + ".txt", 'r', encoding='utf-8') as file:
                 lines = file.readlines()
                 for i in range(len(lines)):
-                    Chat=lines[i].split(" ")
-                    history_book[i]={"user":book.name(Chat[0]),"time":time_machine_past(float(Chat[1])),"message":lines[i][lines[i].find(" ",lines[i].find(" ",lines[i].find(" ")+1)):-1]}
-            #print(history_book)
+                    Chat = lines[i].split(" ")
+                    history_book[i] = {"user": book.name(Chat[0]), "time": time_machine_past(float(Chat[1])),
+                                       "message": lines[i][lines[i].find(" ", lines[i].find(" ", lines[i].find(
+                                           " ") + 1)):-1]}  # print(history_book)
         except FileNotFoundError:
             print("文件不存在！")
         return history_book
-    def is_friend(self,ip:str,friend_ip:str):
+
+    def is_friend(self, ip: str, friend_ip: str):
         return friend_ip in self.friend_list(ip)
-    def ChatId(self,ip:str,friend_ip:str):
+
+    def ChatId(self, ip: str, friend_ip: str):
         return self.friend_list(ip)[friend_ip]
-    def send(self,ip:str,friend_ip:str,message:str):
+
+    def send(self, ip: str, friend_ip: str, message: str):
         try:
-            id=self.ChatId(ip,friend_ip)
-            file_name="chat/"+id+".txt"
+            id = self.ChatId(ip, friend_ip)
+            file_name = "chat/" + id + ".txt"
             with open(file_name, 'a', encoding='utf-8') as file2:
                 file2.write(f"{ip} {time_machine_now()} {message}\n")
         except FileNotFoundError:
             print("文件不存在！")
 
+
 def time_machine_now():
     return time.time()
 
-def time_machine_past(timestamp:float):
+
+def time_machine_past(timestamp: float):
     timeArray = time.localtime(timestamp)
     styleTime = time.strftime("%Y/%m/%d %H:%M:%S", timeArray)
     return styleTime
 
+
 book = name_base("Test.txt");
 book.load()
 
-user=User()
+user = User()
 
-print("现在时间：",time_machine_now(),"=",time_machine_past(time_machine_now()))
+print("现在时间：", time_machine_now(), "=", time_machine_past(time_machine_now()))
+
 
 def get_local_ip():
     try:
@@ -171,67 +184,75 @@ async def get_photo(request: Request):
     client_host = request.client.host
     return client_host
 
+
 @app.get("/Me")
 async def me(request: Request):
-    if book.in_ip(request.client.host)==0:
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
-    return {"name":book.name(request.client.host),"ip":request.client.host}
+    return {"name": book.name(request.client.host), "ip": request.client.host}
+
 
 @app.get("/Add/{friend_name}")
 async def add(request: Request, friend_name: str):
-    if book.in_ip(request.client.host)==0:
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
-    if book.in_name(friend_name)==0:
+    if book.in_name(friend_name) == 0:
         return 1
-    if friend_name==book.name(request.client.host):
+    if friend_name == book.name(request.client.host):
         return 2
-    friend_ip=book.ip(friend_name)
+    friend_ip = book.ip(friend_name)
     print(friend_ip)
     print(user.friend_list(request.client.host))
-    if user.is_friend(request.client.host,friend_ip):
+    if user.is_friend(request.client.host, friend_ip):
         return 3
-    user.add_friend(request.client.host,friend_ip)
+    user.add_friend(request.client.host, friend_ip)
     return "SUCCESS!"
 
+
 @app.get("/Name/{ip}")
-async def name(ip:str):
-    if ip=="全部":
+async def name(ip: str):
+    if ip == "全部":
         return "All"
-    if book.in_ip(ip)==0:
+    if book.in_ip(ip) == 0:
         return 1
     return book.name(ip)
 
+
 @app.get("/delete")
 async def delete(request: Request):
-    if book.in_ip(request.client.host)==0:
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
     return book.remove(request.client.host)
 
+
 @app.get("/send/{friendip}/{message}")
-async def delete(request: Request,friendip:str,message:str):
-    if book.in_ip(request.client.host)==0:
+async def delete(request: Request, friendip: str, message: str):
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
-    if book.in_ip(friendip)==0:
+    if book.in_ip(friendip) == 0:
         return 1
-    if user.is_friend(request.client.host,friendip)==False:
+    if user.is_friend(request.client.host, friendip) == False:
         return 2
-    return user.send(request.client.host,friendip,message)
+    return user.send(request.client.host, friendip, message)
+
 
 @app.get("/history/{friendip}")
-async def delete(request: Request,friendip:str):
-    if book.in_ip(request.client.host)==0:
+async def delete(request: Request, friendip: str):
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
-    if book.in_ip(friendip)==0:
+    if book.in_ip(friendip) == 0:
         return 1
-    if user.is_friend(request.client.host,friendip)==False:
+    if user.is_friend(request.client.host, friendip) == False:
         return 2
-    return user.chat_history(user.ChatId(request.client.host,friendip))
+    return user.chat_history(user.ChatId(request.client.host, friendip))
+
 
 @app.get("/List")
 async def List(request: Request):
-    if book.in_ip(request.client.host)==0:
+    if book.in_ip(request.client.host) == 0:
         return "Who are you?awa"
     return user.friend_list(request.client.host)
+
 
 @app.get("/sign/{name}")
 async def sign(request: Request, name: str):
@@ -241,13 +262,15 @@ async def sign(request: Request, name: str):
     if book.in_name(name):
         return 2
     print(f"新注册用户({client_host}):{name}")
-    if name=="JUNU_LOVE_PROGRAMMING":#调试万能码
+    if name == "JUNU_LOVE_PROGRAMMING":  # 调试万能码
         print("发现万能码")
         book.new(client_host, name)
+
         def fun():
             time.sleep(30)
             book.remove(client_host)
             print("已关闭万能码")
+
         back = threading.Thread(target=fun)
         back.start()
     else:
@@ -284,11 +307,13 @@ async def run_server(host, port):
     server = uvicorn.Server(config)
     await server.serve()
 
+
 def my_load():
     while True:
         time.sleep(60)
         book.load()
         print("更新文件数据")
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

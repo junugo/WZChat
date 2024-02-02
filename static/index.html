@@ -31,8 +31,8 @@
     <div class="C">
       <div class="box">
         <div class="myself">
-          <p class="myname right" style="font-size: 2ch;font-weight: bold;line-height: 0.25;flex-grow: 1;">A12</p>
-          <p class="myip right" style="font-size: 2ch;line-height: 0.25;flex-grow: 1;">127.0.0.1</p>
+          <span class="myname right" style="font-size:5vh;flex-grow: 1;font-weight: bold;">A12</span>
+          <span class="myip right" style="font-size:4vh;flex-grow: 1;">127.0.0.1</span>
         </div>
         <div class="mlist">
           <div class="Sbox">
@@ -66,8 +66,9 @@
     </div>
 </body>
 <script>
-  var now = "全部"
-  var last = "全部"
+  var now
+  var last
+  var over
   var friends = []
   var me;
   let New = document.querySelector(".New")
@@ -95,6 +96,7 @@
         }
       }).catch(error => { console.error('There has been a problem with your fetch operation:', error); alert("远程服务器异常 QAQ") });
   })
+  setInterval("open(now,false)", 1000);
 </script>
 <script>
 
@@ -137,7 +139,7 @@
     console.log("message-sned:", chat.value)
     console.log("message-sned-friend:", now)
     chat.value = ""
-    open(now)
+    open(now,true)
   }
 </script>
 
