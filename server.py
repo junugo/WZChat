@@ -105,7 +105,7 @@ class User():
                 lines = file.readlines()
                 for i in range(len(lines)):
                     Chat=lines[i].split(" ")
-                    history_book[i]={"user":Chat[0],"time":time_machine_past(float(Chat[1])),"message":(''.join([s for s in Chat[2]]))[:-1]}
+                    history_book[i]={"user":book.name(Chat[0]),"time":time_machine_past(float(Chat[1])),"message":lines[i][lines[i].find(" ",lines[i].find(" ",lines[i].find(" ")+1)):-1]}
             #print(history_book)
         except FileNotFoundError:
             print("文件不存在！")

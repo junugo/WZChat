@@ -402,7 +402,7 @@
             console.log(data);
             console.log(data.name);
             console.log(data.ip);
-            me=data.ip
+            me=data.name
 
             document.querySelector(".myname").innerHTML = data.name;
             document.querySelector(".myip").innerHTML = data.ip;
@@ -488,7 +488,7 @@
         renderer: 'svg',
         loop: false,
         autoplay: false,
-        path: "https://raw.githubusercontent.com/thesvbd/Lottie-examples/master/assets/animations/skip-forward.json"
+        path: "/skip-forward.json"
       });
 
       iconSkipForward.addEventListener('click', function () {
