@@ -70,6 +70,37 @@
       animation: light 0.4s ease forwards;
       animation-delay: 1s;
     }
+    /* 修改滚动条样式 */
+/* 设置滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+ 
+/* 设置滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 5px;
+}
+ 
+/* 设置滚动条滑块在悬停状态下的背景色和圆角 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #999;
+  border-radius: 5px;
+}
+ 
+/* 设置滚动条轨道的背景色和圆角 */
+::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+ 
+/* 设置滚动条轨道在悬停状态下的背景色和圆角 */
+::-webkit-scrollbar-track:hover {
+  background-color: #ccc;
+}
   </style>
   <style>
     .body {
@@ -339,10 +370,10 @@
       <div class="boxr">
         <div class="message1">
           <div class="message my_message">
-            <p>气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我气死我1111111111111111111111111111111111111111111111111111111<br><span>10:15</span> </p>
+            <p><span class="GoodName">JUNU</span>1<br><span>10:15</span> </p>
           </div>
           <div class="message frnd_message">
-            <p>在写作业<br><span>10:15</span> </p>
+            <p><span class="GoodName">A?</span>2<br><span>10:15</span> </p>
           </div>
         </div>
         <div class="cin">
@@ -356,9 +387,12 @@
     </div>
     <script>
       var now = "全部"
+      var last = "全部"
       var friends = []
+      var me;
       let New = document.querySelector(".New")
       let mlist = document.querySelector(".mlist")
+      let message1 = document.querySelector(".message1")
       load_user()
       function load_user() {
         fetch('/Me')
@@ -368,11 +402,13 @@
             console.log(data);
             console.log(data.name);
             console.log(data.ip);
+            me=data.ip
 
             document.querySelector(".myname").innerHTML = data.name;
             document.querySelector(".myip").innerHTML = data.ip;
           }).catch(error => { console.error('There has been a problem with your fetch operation:', error); alert("远程服务器异常 QAQ") });
         mlist.innerHTML = ""
+        message1.innerHTML=""
         fetch('/List')
           .then(response => response.json())
           .then(data => {
@@ -407,6 +443,17 @@
           .then(response => response.json())
           .then(data => {
             console.log(data);
+            message1.innerHTML=""
+            for (i in data){
+              making=data[i]
+              if(making.user==me)
+              {
+                message1.innerHTML+=`<div class="message my_message"><p><span class="GoodName">${making.user}</span>${making.message}<br><span>${making.time}</span></p></div>`
+              }
+              else{
+                message1.innerHTML+=`<div class="message frnd_message"><p><span class="GoodName">${making.user}</span>${making.message}<br><span>${making.time}</span></p></div>`
+              }
+            }
           }).catch(error => { console.error('There has been a problem with your fetch operation:', error); alert("远程服务器异常 QAQ") });
       }
       New.addEventListener("click", function () {
@@ -451,10 +498,7 @@
           setTimeout("cold=true;send.style.backgroundColor=\"greenyellow\";", 3000)
           animationSkipForward.playSegments([0, 60], true);
           console.log("敲击图标")
-          fetch('/send/' + now + "/" + chat.value)
-          console.log("message-sned:", chat.value)
-          console.log("message-sned-friend:", now)
-          chat.value = ""
+          fire()
           send.style.backgroundColor = "darkgrey";
         }
         /*
@@ -463,6 +507,18 @@
         }
         */
       });
+      chat.addEventListener("keydown", function(event) {
+      if (event.code === "Enter") {
+          fire()
+      }})
+      function fire()
+      {
+        fetch('/send/' + now + "/" + chat.value)
+        console.log("message-sned:", chat.value)
+        console.log("message-sned-friend:", now)
+        chat.value = ""
+        open(now)
+      }
     </script>
 </body>
 

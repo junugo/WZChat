@@ -70,13 +70,14 @@ class name_base():
         else:
             return 0
     def in_ip(self,ip:str):
+        if ip=="全部":return True
         return ip in self.base
     def in_name(self,name:str):
         return name in self.base.values()
 
 class User():
     def friend_list(self,ip:str):
-        all_friend_chat={"全部":"all"}
+        all_friend_chat={}
         try:
             with open("user/"+ip+".txt", 'r', encoding='utf-8') as file:
                 for line in file:
@@ -85,29 +86,30 @@ class User():
         except FileNotFoundError:
             print("文件不存在！")
         return all_friend_chat
+    def new(self,ip:str):
+        with open("user/"+ip+".txt", 'w', encoding='utf-8') as file:
+            file.write(f"全部 public\n")
     def add_friend(self,ip:str,friend_ip:str):
         chat_num=str(len(os.listdir("chat")) + 1)
         with open("chat/"+chat_num+".txt", 'w', encoding='utf-8') as file:
-            file.write(f"{ip} {friend_ip}\n")
+            pass
         with open("user/"+ip+".txt", 'w', encoding='utf-8') as file:
             file.write(f"{friend_ip} {chat_num}\n")
         with open(f"user/{friend_ip}.txt", 'w', encoding='utf-8') as file:
-            file.write(ip+" "+chat_num+"\n")
+            file.write(f"{ip} {chat_num}\n")
         print(f"用户 {ip} 已成功添加好友 {friend_ip}")
-    def chat_history(self,ip:str,chat_num:str):
-        history=[]
+    def chat_history(self,chat_num:str):
+        history_book={}
         try:
             with open("chat/"+chat_num+".txt", 'r', encoding='utf-8') as file:
-                first_line = file.readline()
-                both=first_line.strip().split(' ')
-                if ip==both[1]:
-                    for line in file.readlines()[1:]:
-                        history.append(str(int(line[0])+1%2)+line[1:])
-                else:
-                    history=file.readlines()[1:]
+                lines = file.readlines()
+                for i in range(len(lines)):
+                    Chat=lines[i].split(" ")
+                    history_book[i]={"user":Chat[0],"time":time_machine_past(float(Chat[1])),"message":(''.join([s for s in Chat[2]]))[:-1]}
+            #print(history_book)
         except FileNotFoundError:
             print("文件不存在！")
-        return history
+        return history_book
     def is_friend(self,ip:str,friend_ip:str):
         return friend_ip in self.friend_list(ip)
     def ChatId(self,ip:str,friend_ip:str):
@@ -116,24 +118,17 @@ class User():
         try:
             id=self.ChatId(ip,friend_ip)
             file_name="chat/"+id+".txt"
-            with open(file_name, 'r', encoding='utf-8') as file:
-                first_line = file.readline()
-                both=first_line.strip().split(' ')
-                if ip==both[1]:
-                    with open(file_name, 'a', encoding='utf-8') as file2:
-                        file2.write(f"1 {time_machine_now()} {message}\n")
-                else:
-                    with open(file_name, 'a', encoding='utf-8') as file2:
-                        file2.write(f"0 {time_machine_now()} {message}\n")
+            with open(file_name, 'a', encoding='utf-8') as file2:
+                file2.write(f"{ip} {time_machine_now()} {message}\n")
         except FileNotFoundError:
             print("文件不存在！")
 
 def time_machine_now():
     return time.time()
 
-def time_machine_past(timestamp:int):
+def time_machine_past(timestamp:float):
     timeArray = time.localtime(timestamp)
-    styleTime = time.strftime(str("%Y/%m/%d %H:%M:%S"), timeArray)
+    styleTime = time.strftime("%Y/%m/%d %H:%M:%S", timeArray)
     return styleTime
 
 book = name_base("Test.txt");
@@ -230,7 +225,7 @@ async def delete(request: Request,friendip:str):
         return 1
     if user.is_friend(request.client.host,friendip)==False:
         return 2
-    return user.chat_history(request.client.host,user.ChatId(request.client.host,friendip))
+    return user.chat_history(user.ChatId(request.client.host,friendip))
 
 @app.get("/List")
 async def List(request: Request):
@@ -258,6 +253,7 @@ async def sign(request: Request, name: str):
     else:
         book.new(client_host, name)
         book.save()
+        user.new(client_host)
     return client_host
 
 

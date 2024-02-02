@@ -33,6 +33,10 @@
     font-size: 0.85em;
     opacity: 0.5;
 }
+.GoodName
+{
+    font-size: 0.7em !important;
+}
 .my_message
 {
     justify-content: flex-end;
